@@ -111,8 +111,11 @@ class AverageTZ:
         MW_air = 28.966  # lb / lb.mol
         MW_a = gamma_g * MW_air  # lb / lb.mol
 
+        # There is at least 5 significant figures
+        n = 5
+
         # Scarborough criteria for n = 5
-        epsilon_s = .5 * 10 ** (2 - 5)
+        epsilon_s = .5 * 10 ** (2 - n)
 
         # Main loop for pressure, temperature and average Z - Factor calculations for each depth using SRK EoS
         for i in range(section):
@@ -265,8 +268,9 @@ class AverageTZ:
                 s = .0375 * gamma_g * length * math.cos(math.radians(theta)) / (z_av * self.F_to_R(T_av) * section)
                 e_s = np.exp(s)
                 p_2 = np.sqrt(e_s * np.power(pressure[i], 2) + (6.67 * (10 ** (-4)) * (e_s - 1) * f_M * np.power((q_sc * z_av * self.F_to_R(T_av)), 2) / (np.power(d_in, 5) * np.cos(np.radians(theta)))))   # psi
+            # # of s.f is 6 for each element of the pressure list, and 6 > n = 5
             # If absolute approximate percent relative error is smaller than Scarborough criteria:
-            pressure[i + 1] = "{0:.5g}".format(p_2[-1])
+            pressure[i + 1] = "{0:.6g}".format(p_2[-1])   # psi
         return depth, pressure, temp
 
 
@@ -312,4 +316,3 @@ section = int(input("# of Section: "))
 
 well_simulator = AverageTZ(id_num, section)
 well_simulator.simulate_well()
-
