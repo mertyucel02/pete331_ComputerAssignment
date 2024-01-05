@@ -48,7 +48,7 @@ cv2.imshow("Computer Assignment - 20231", ComputerAssignment)
 cv2.waitKey()
 cv2.destroyAllWindows()
 
-# Class syntax
+# A class created by keyword class
 class AverageTZ:
 
     # Initialize objects of a class by calling __init__ function
@@ -60,7 +60,9 @@ class AverageTZ:
     def F_to_R(self, temp_F):
         return temp_F + 460
 
-    # A function to compute pressure and temperature of each depth and average Z - Factor by using Soave - Redlich - Kwong EoS
+    # A function to compute pressure and temperature
+    # of each depth and average Z - Factor
+    # by using Soave - Redlich - Kwong EoS
     def calculate_Z_av_by_using_SRK_EoS(self):
 
         # A loop to add each element of string to list
@@ -68,7 +70,7 @@ class AverageTZ:
         for i in str(self.id_num):
             student_id.append(int(i))
 
-        # Constant data derived from student ID
+        # Constant values derived from student ID
         q_sc = 3000 + (student_id[6] + 1) * 600  # Mscf / d
         gamma_g = .65 + ((student_id[4] + 1) / 50)
         length = 4000 + (student_id[5] + 1) * 500  # ft
@@ -80,7 +82,9 @@ class AverageTZ:
         gradient_T = 13 / 1000  # Fahrenheit / ft
 
         R = 10.732  # (ft^3 * psi) / (Rankine * lb.mol)
-        depth = np.linspace(0, length, section + 1)  # array([0, depth[1], ... , depth[section]])
+        depth = np.linspace(0, length, section + 1)  # array([0,
+                                                     #        depth[1], ... ,
+                                                     #        depth[section]])
         pressure = np.zeros(section + 1)  # array([0, (0 * 1), ... , (0 * section)])
         pressure[0] = p_hf  # array([p_hf, (0 * 1), ... , (0 * section)])
         temp = np.zeros(section + 1)  # array([0, (0 * 1), ... , (0 * section)])
@@ -97,14 +101,19 @@ class AverageTZ:
         acentric_factor_C3H8 = .152
 
         # Acentric factor of dry gas composition
-        acentric_factor = y_CH4 * acentric_factor_CH4 + y_C2H6 * acentric_factor_C2H6 + y_C3H8 * acentric_factor_C3H8
+        acentric_factor = y_CH4 * acentric_factor_CH4 + \
+                          y_C2H6 * acentric_factor_C2H6 + \
+                          y_C3H8 * acentric_factor_C3H8
 
-        # Pseudo critical properties by the Standing’s (1977) correlation for dry gases using gas gravity
+        # Pseudo critical properties
+        # by the Standing’s (1977) correlation
+        # for dry gases using gas gravity
         p_pc = 677 + 15 * gamma_g - 37.5 * (gamma_g ** 2)   # Rankine
         T_pc = 168 + 325 * gamma_g - 12.5 * (gamma_g ** 2)   # Rankine
 
         # Coefficients of SRK EoS to calculate Z-Factor
-        coeff_a = .42727 * (((R ** 2) * (T_pc ** 2)) / p_pc)  # (ft^6 * psi) / (lb.mol^2)
+        coeff_a = .42727 * (((R ** 2) * (T_pc ** 2)) / p_pc)  # (ft^6 * psi)
+                                                                # / (lb.mol^2)
         coeff_b = .08664 * ((R * T_pc) / p_pc)  # ft^3 / lb.mol
 
         # Molecular weight of the natural gas
@@ -117,7 +126,7 @@ class AverageTZ:
         # Scarborough criteria for n = 5
         epsilon_s = .5 * 10 ** (2 - n)
 
-        # Main loop for pressure, temperature and average Z - Factor calculations for each depth using SRK EoS
+        # Main loop for average pressure, temperature and Z - Factor calculations for each depth using SRK EoS
         for i in range(section):
             p_estimated = pressure[i] + .0001  # psi
             data_p = [p_estimated, pressure[i]]  # psi
@@ -138,7 +147,8 @@ class AverageTZ:
             coeff_4 = -1 * coeff_A * coeff_B  # (ft^3 * psi) / (Rankine * lb.mol)
 
             array_coeff = np.array([coeff_1, coeff_2, coeff_3, coeff_4], dtype=float)  # array([float(coeff_1), float(coeff_2), float(coeff_3), float(coeff_4)])
-            coeff_poly = np.poly1d(np.polyder(array_coeff))  # float(array_coeff[0]) * x ^ (len(array_coeff) - 1) + float(array_coeff[1]) * x ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * x ^ (1) + float(array_coeff[len(array_coeff) - 1]) * x ^ (0)
+            coeff_poly = np.poly1d(np.polyder(array_coeff))  # float(array_coeff[0]) * x ^ (len(array_coeff) - 1) + float(array_coeff[1]) * x ^ (len(array_coeff) - 2) + ...
+                                                            # + float(array_coeff[len(array_coeff) - 2]) * x ^ (1) + float(array_coeff[len(array_coeff) - 1]) * x ^ (0)
 
             soln = np.roots(coeff_poly)
             '''
@@ -152,10 +162,23 @@ class AverageTZ:
             poly_val = np.polyval(array_coeff, soln)
 
             '''
-            array([float(array_coeff[0]) * soln[0, 0] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[0, 0] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[0, 0] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[0, 0] ^ (0), float(array_coeff[0]) * soln[0, 1] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[0, 1] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[0, 1] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[0, 1] ^ (0), float(array_coeff[0]) * soln[0, 2] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[0, 2] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[0, 2] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[0, 2] ^ (0)],
-                  [float(array_coeff[0]) * soln[1, 0] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[1, 0] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[1, 0] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[1, 0] ^ (0), float(array_coeff[0]) * soln[1, 1] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[1, 1] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[1, 1] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[1, 1] ^ (0), float(array_coeff[0]) * soln[1, 2] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[1, 2] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[1, 2] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[1, 2] ^ (0)],
+            array([float(array_coeff[0]) * soln[0, 0] ^ (len(array_coeff) - 1) + float(array_coeff[1]) 
+                    * soln[0, 0] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[0, 0] ^ (1) + float(array_coeff[len(array_coeff) - 1]) 
+                        * soln[0, 0] ^ (0), float(array_coeff[0]) * soln[0, 1] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[0, 1] ^ (len(array_coeff) - 2) + ... 
+                            + float(array_coeff[len(array_coeff) - 2]) * soln[0, 1] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[0, 1] ^ (0), float(array_coeff[0]) * soln[0, 2] ^ (len(array_coeff) - 1) 
+                                + float(array_coeff[1]) * soln[0, 2] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[0, 2] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[0, 2] ^ (0)],
+                  [float(array_coeff[0]) * soln[1, 0] ^ (len(array_coeff) - 1) + float(array_coeff[1]) 
+                    * soln[1, 0] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[1, 0] ^ (1) + float(array_coeff[len(array_coeff) - 1]) 
+                        * soln[1, 0] ^ (0), float(array_coeff[0]) * soln[1, 1] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[1, 1] ^ (len(array_coeff) - 2) + ... 
+                            + float(array_coeff[len(array_coeff) - 2]) * soln[1, 1] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[1, 1] ^ (0), float(array_coeff[0]) * soln[1, 2] ^ (len(array_coeff) - 1) 
+                                + float(array_coeff[1]) * soln[1, 2] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[1, 2] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[1, 2] ^ (0)],
                   ...
-                  [float(array_coeff[0]) * soln[section, 0] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[section, 0] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[section, 0] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[section, 0] ^ (0), float(array_coeff[0]) * soln[section, 1] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[section, 1] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[section, 1] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[section, 1] ^ (0), float(array_coeff[0]) * soln[section, 2] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[section, 2] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[section, 2] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[section, 2] ^ (0)])
+                  [float(array_coeff[0]) * soln[section, 0] ^ (len(array_coeff) - 1) + float(array_coeff[1]) 
+                    * soln[section, 0] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[section, 0] ^ (1) + float(array_coeff[len(array_coeff) - 1]) 
+                        * soln[section, 0] ^ (0), float(array_coeff[0]) * soln[section, 1] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[section, 1] ^ (len(array_coeff) - 2) 
+                            + ... + float(array_coeff[len(array_coeff) - 2]) * soln[section, 1] ^ (1) + float(array_coeff[len(array_coeff) - 1]) * soln[section, 1] ^ (0), float(array_coeff[0]) * 
+                                soln[section, 2] ^ (len(array_coeff) - 1) + float(array_coeff[1]) * soln[section, 2] ^ (len(array_coeff) - 2) + ... + float(array_coeff[len(array_coeff) - 2]) * soln[section, 2] ^ (1) 
+                                    + float(array_coeff[len(array_coeff) - 1]) * soln[section, 2] ^ (0)])
             '''
 
             is_real = np.isreal(poly_val)
@@ -274,7 +297,8 @@ class AverageTZ:
         return depth, pressure, temp
 
 
-    # A function to create table for using lists of depth, temperature and pressure
+    # A function to create table for
+    # using lists of depth, temperature and pressure
     def generate_table(self, depth, temperature, pressure):
         my_data = []
         for i in range(0, self.section + 1):
@@ -306,7 +330,8 @@ class AverageTZ:
         depth, pressure, temperature = self.calculate_Z_av_by_using_SRK_EoS()
         table_data = self.generate_table(depth, temperature, pressure)
         print(table_data)
-        print("Bottom Hole Flowing Pressure is " + str(pressure[self.section]) + " psia")
+        print("Bottom Hole Flowing Pressure is " +
+              str(pressure[self.section]) + " psia")
         return self.plot_graph(pressure, depth)
 
 
@@ -316,3 +341,4 @@ section = int(input("# of Section: "))
 
 well_simulator = AverageTZ(id_num, section)
 well_simulator.simulate_well()
+
